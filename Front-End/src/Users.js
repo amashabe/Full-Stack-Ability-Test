@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from "moment";
+import {Spinner, Toast} from 'react-bootstrap';
 
 const  subStringDate = (date) => {
     const month = date.substring(5, 7);
@@ -45,13 +46,18 @@ const Users = (users) => {
         users.users.map(user => {
             console.log()
             return (
-                <div className="container" key={user.userId}>
+                <div key={user.userId}>
                     <div className="row">
                         <div className="col-3"></div>
-                        <div  className="col-6 text-center">
-                            <span className="border-primary border-bottom">
-                                {daysLeft(user.start_date, user.end_date)}{" days "} {"("} {subStringDate(user.start_date)} {" to "} {subStringDate(user.end_date)} {")"}
-                            </span>
+                        <div  className="col-6 text-center" style={{marginTop: 25}}>
+                            <Toast style={{width: '375px'}}>
+                                <Toast.Header>
+                                    <strong className="mr-auto">{user.full_names}</strong>
+                                    <span style={{fontSize: 10}}> {user.email_address}</span>
+                                    {/*<small>11 mins ago</small>*/}
+                                </Toast.Header>
+                                <Toast.Body>{daysLeft(user.start_date, user.end_date)}{" days "} {"("} {subStringDate(user.start_date)} {" to "} {subStringDate(user.end_date)} {")"}</Toast.Body>
+                            </Toast>
                         </div>
                         <div className="col-3"></div>
                     </div>
@@ -59,11 +65,17 @@ const Users = (users) => {
             )
         })
     ) : (
-        <div className="container" style={{marginTop: '25px'}}>
+        <div className="container wrapper-2" >
             <div className="row">
                 <div className="col-3"></div>
                 <div className="col-6 text-center">
-                   Loading Users........
+                    <Spinner animation="grow" variant="primary" />
+                    <Spinner animation="grow" variant="secondary" />
+                    <Spinner animation="grow" variant="success" />
+                    <Spinner animation="grow" variant="danger" />
+                    <Spinner animation="grow" variant="warning" />
+                    <Spinner animation="grow" variant="info" />
+                    <Spinner animation="grow" variant="dark" />
                 </div>
                 <div className="col-3"></div>
             </div>

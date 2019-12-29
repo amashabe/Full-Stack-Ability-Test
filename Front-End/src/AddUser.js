@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import './App.css'
 import { validateUserData } from './Valid'
 import moment from "moment";
+import {Spinner} from "react-bootstrap";
 
 class AddUser extends Component {
     state = {
@@ -11,7 +13,8 @@ class AddUser extends Component {
         start_date: null,
         end_date: null,
         error: null,
-        success: false
+        success: false,
+        loading: false
     }
 
     daysLeft = (start_date, end_date) => {
@@ -28,7 +31,8 @@ class AddUser extends Component {
             success: false})
     }
 
-    handleSubmit = event =>{
+    handleSubmit = event => {
+        this.setState({loading: true})
         event.preventDefault();
         const {email_address, full_names, phone_numbers, start_date, end_date} = this.state;
         const days = this.daysLeft(start_date, end_date);
@@ -39,15 +43,25 @@ class AddUser extends Component {
             start_date: start_date,
             end_date: end_date
         }
+        console.log(newUser)
         const error = validateUserData(newUser, days);
         if(error){
-          this.setState({error: error})
+          this.setState({error: error, loading: false})
         }else{
+            this.setState({loading: true})
             axios.post('/newuser', newUser)
                 .then((user) => {
                     this.props.addUser(this.state)
                     document.getElementById("create-course-form").reset();
-                    this.setState({success: true})
+                    this.setState({ email_address: null,
+                        full_names: null,
+                        phone_numbers: null,
+                        start_date: null,
+                        end_date: null,
+                        error: null,
+                        success: true,
+                        loading: false})
+
                 })
                 .catch((err) => {
                     console.log(err.data);
@@ -56,56 +70,64 @@ class AddUser extends Component {
     }
 
     render() {
-        const {error, success, full_names} = this.state;
+        const {error, success, loading} = this.state;
         return (
-            <div className="container">
-                <div className="row">
-                    <div className="col-3 text-center"></div>
-                    <div className="col-6 border border-primary " style={{marginTop: '10%', padding: '10px', borderWidth: '3px', borderRadius: '5px', marginBottom: '50px'}}>
-                        <form onSubmit={this.handleSubmit} id="create-course-form">
-                            {
-                                success ? <div className="alert alert-success text-center" role="alert">
-                                    Successfull Added {full_names}.
-                                </div> : null
-                            }
-                            <div className="row">
-                                <div className="col">
-                                    <label style={{ marginBottom: 0,  marginTop: '0.5rem'}}>Full Names : </label>
-                                    <input type="text" name="full_names" className="form-control" onChange={this.handleChange} placeholder="Full Names" />
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col">
-                                    <label  style={{ marginBottom: 0,  marginTop: '0.5rem'}}>Email Address: </label>
-                                    <input type="email" name="email_address" className="form-control" onChange={this.handleChange} placeholder="Email Address"/>
-                                </div>
-                                <div className="col">
-                                    <label  style={{ marginBottom: 0,  marginTop: '0.5rem'}}>Phone Number: </label>
-                                    <input type="text" name="phone_numbers" className="form-control" onChange={this.handleChange} placeholder="Phone Number"/>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col">
-                                    <label  style={{ marginBottom: 0,  marginTop: '0.5rem'}}>Start Date: </label>
-                                    <input type="date" name="start_date" className="form-control" onChange={this.handleChange} placeholder="Start Date"/>
-                                </div>
-                                <div className="col">
-                                    <label  style={{ marginBottom: 0,  marginTop: '0.5rem'}}>End Date: </label>
-                                    <input type="date" name="end_date" className="form-control" onChange={this.handleChange} placeholder="End Date"/>
-                                </div>
-                            </div>
-                            <div className="form-group" style={{ marginBottom: 0,  marginTop: '0.5rem'}}>
-                                <button className="btn btn-primary btn-md btn-block">Submit</button>
-                            </div>
-                            {
-                                error ?
-                                <div className="alert alert-danger text-center" role="alert" style={{ marginBottom: 0,  marginTop: '0.5rem'}}>
-                                    {error}
-                                </div> : null
-                            }
-                        </form>
+            <div className="wrapper">
+                <div className="form-wrapper">
+                    <h1>Create A User</h1>
+                    <form onSubmit={this.handleSubmit} noValidate id="create-course-form">
+                        <div className="input-style">
+                            <label>Full Names</label>
+                            <input
+                                type="text"
+                                name="full_names"
+                                onChange={this.handleChange}
+                                placeholder="Full Names"
+                            />
+                        </div>
+                        <div className="input-style">
+                            <label>Email</label>
+                            <input
+                                type="email"
+                                name="email_address"
+                                onChange={this.handleChange}
+                                placeholder="Email Address"
+                            />
+                        </div>
+                        <div className="input-style">
+                            <label>Phone Number</label>
+                            <input
+                                type="text"
+                                name="phone_numbers"
+                                onChange={this.handleChange}
+                                placeholder="Phone Number"/>
+                        </div>
+                        <div className="input-style">
+                            <label>Email</label>
+                            <input
+                                type="date"
+                                name="start_date"
+                                onChange={this.handleChange}
+                                placeholder="Start Date"/>
+                        </div> <div className="input-style">
+                        <label>Email</label>
+                        <input
+                            type="date"
+                            name="end_date"
+                            onChange={this.handleChange}
+                            placeholder="End Date"/>
                     </div>
-                    <div className="col-3 text-center"></div>
+
+                        <div className="createAccount">
+                            { loading ? (
+                                <button disabled><Spinner animation="grow" variant="light" /></button>
+                            ) : (<button>Create A User</button>)}
+                           { error ? (<h5 className="errorMessage text-capitalize">{error}</h5>)
+                           : (null)}
+                            { success ? (<h5 className="successMessage text-capitalize">Successfully added new user</h5>)
+                                : (null)}
+                        </div>
+                    </form>
                 </div>
             </div>
         );

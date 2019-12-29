@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios'
+import './App.css'
 
 import Users from './Users';
 import AddUser from './AddUser'
@@ -32,9 +33,16 @@ class App extends Component {
     const {users} = this.state;
  
     return (
-      <div className="App">
-        <AddUser addUser={this.addUser}/>
-        <Users users={users} subStringDate={this.subStringDate} />
+      <div className="container-fluid app">
+        <div className="row">
+          <div className="col">
+            <AddUser addUser={this.addUser}/>
+          </div>
+          <div className="col wrapper-2">
+            <Users users={users} subStringDate={this.subStringDate} />
+          </div>
+        </div>
+
       </div>
     );
   }

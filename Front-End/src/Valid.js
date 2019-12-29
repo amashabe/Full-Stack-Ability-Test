@@ -26,7 +26,7 @@ exports.validateUserData = (data, days) => {
     if (isEmpty(data.phone_numbers))
         return "Phone number must not be empty";
     else if (!isPhone(data.phone_numbers)) {
-        return "Phone number must be a valid south african 10 digits phone number";
+        return "Phone number must be a valid 10 digits number";
     }
 
     if (isEmpty(data.start_date)) return "Start date must not be empty";
